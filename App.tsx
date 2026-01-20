@@ -12,6 +12,8 @@ const App: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
+  const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1614030424754-24d1f93f181c?auto=format&fit=crop&q=80&w=1200";
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -20,11 +22,20 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Génération de la photo artistique de mise en table
   useEffect(() => {
     const generateArtisticImage = async () => {
       try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        // Vérification sécurisée de la clé API
+        const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
+        
+        if (!apiKey) {
+          console.warn("Clé API manquante. Utilisation de l'image par défaut.");
+          setGeneratedImage(FALLBACK_IMAGE);
+          setIsImageLoading(false);
+          return;
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
         const prompt = "A stunning, professional high-end minimalist photograph of a luxury table setting for 'Maison Art de la Table'. The color palette is strictly sophisticated olive green (#A8A24F) and warm off-white. Features include matte olive green ceramic dinnerware, a textured cream linen napkin, minimalist thin-stemmed glassware, and a single elegant botanical leaf. The lighting is soft, natural tropical daylight with soft artistic shadows. 8k resolution, serene and deeply elegant atmosphere, Mauritian luxury style.";
         
         const response = await ai.models.generateContent({
@@ -37,17 +48,16 @@ const App: React.FC = () => {
           }
         });
 
-        for (const part of response.candidates[0].content.parts) {
-          if (part.inlineData) {
-            setGeneratedImage(`data:image/png;base64,${part.inlineData.data}`);
-            setIsImageLoading(false);
-            break;
-          }
+        const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+        if (part?.inlineData) {
+          setGeneratedImage(`data:image/png;base64,${part.inlineData.data}`);
+        } else {
+          setGeneratedImage(FALLBACK_IMAGE);
         }
       } catch (error) {
         console.error("Erreur lors de la génération de l'image:", error);
-        // Fallback sur une image élégante si l'API échoue
-        setGeneratedImage("https://images.unsplash.com/photo-1614030424754-24d1f93f181c?auto=format&fit=crop&q=80&w=1200");
+        setGeneratedImage(FALLBACK_IMAGE);
+      } finally {
         setIsImageLoading(false);
       }
     };
@@ -57,7 +67,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-500 py-6 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent'}`}>
         <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
           <div className="flex items-center">
@@ -106,7 +115,6 @@ const App: React.FC = () => {
         )}
       </nav>
 
-      {/* Hero Section */}
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-mat-olive scroll-mt-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent z-10" />
         <div className="relative z-20 text-center px-6">
@@ -125,25 +133,20 @@ const App: React.FC = () => {
              </a>
           </div>
         </div>
-        
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
           <div className="w-[1px] h-20 bg-gradient-to-b from-white to-transparent" />
         </div>
       </section>
 
-      {/* About Us */}
       <section id="about" className="py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
         <div className="container mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
           <div>
-            <SectionHeading 
-              subtitle="À Propos" 
-              title="Une Passion pour le Design Authentique" 
-            />
+            <SectionHeading subtitle="À Propos" title="Une Passion pour le Design Authentique" />
             <p className="text-gray-600 text-lg leading-relaxed mb-8">
               Maison Art De La Table est née d'une passion profonde pour le design authentique et l'artisanat d'exception. Nous apportons une vision globale renouvelée, une structure moderne et une expertise éprouvée dans la distribution internationale des arts de la table.
             </p>
             <p className="text-gray-600 text-lg leading-relaxed mb-12">
-              Notre mission est de connecter les plus beaux arts de la table du monde aux destinations les plus exceptionnelles de l'Océan Indien. Notre parcours est défini par l'excellence, la durabilité et une approche curatée de l'hospitalité.
+              Notre mission est de connecter les plus beaux arts de la table du monde aux destinations les plus exceptionnelles de l'Océan Indien.
             </p>
             <div className="grid grid-cols-2 gap-8">
               <div>
@@ -156,7 +159,7 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="relative group min-h-[600px] flex items-center justify-center bg-gray-200">
+          <div className="relative group min-h-[600px] flex items-center justify-center bg-gray-200 shadow-2xl">
             {isImageLoading ? (
               <div className="flex flex-col items-center gap-4 text-mat-olive">
                 <Loader2 className="animate-spin w-12 h-12" />
@@ -168,7 +171,7 @@ const App: React.FC = () => {
                 {generatedImage && (
                   <img 
                     src={generatedImage} 
-                    alt="Mise en table artistique générée par IA"
+                    alt="Mise en table artistique"
                     className="w-full h-[600px] object-cover transition-all duration-700 animate-in fade-in zoom-in-95"
                   />
                 )}
@@ -178,7 +181,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Mission Quote */}
       <section id="mission" className="py-32 bg-mat-olive relative overflow-hidden scroll-mt-20">
         <div className="absolute top-0 right-0 p-12 opacity-10">
            <Logo className="w-96 h-96" />
@@ -195,13 +197,9 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Services */}
       <section id="services" className="py-24 lg:py-40 bg-white scroll-mt-20">
         <div className="container mx-auto px-6 md:px-12">
-          <SectionHeading 
-            subtitle="L'Avantage Stratégique" 
-            title="Nos Forces et Services" 
-          />
+          <SectionHeading subtitle="L'Avantage Stratégique" title="Nos Forces et Services" />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mt-20">
             {[
               { title: "Expertise Internationale", desc: "Logistique optimisée et service après-vente sur plusieurs continents." },
@@ -216,31 +214,24 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="mt-32 p-16 bg-[#F9F9F7] text-center">
-            <h3 className="text-4xl font-serif text-gray-900 mb-6 italic">Excellence dans le Sourcing</h3>
-            <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              Nous nous spécialisons dans l'identification des arts de la table, de la verrerie et de la coutellerie les plus raffinés pour répondre aux exigences uniques des hôtels de luxe et des domaines privés.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Partners Slider Section */}
       <section className="py-24 bg-mat-olive overflow-hidden relative scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12 mb-16 relative z-10">
-          <SectionHeading light subtitle="Partenaires" title="Des Partenaires Mondiaux" />
+        <div className="container mx-auto px-6 md:px-12 mb-16 relative z-10 text-center">
+           <span className="text-xs uppercase tracking-[0.4em] text-white/60 mb-4 block font-serif italic">Curateurs de Marques de Prestige</span>
         </div>
         <div className="relative z-10">
           <div className="animate-marquee flex gap-12 md:gap-32 items-center">
             {PARTNERS.map((partner, index) => (
-              <div key={`partner-1-${index}`} className="flex-shrink-0 flex justify-center px-4">
+              <div key={`partner-1-${index}`} className="flex-shrink-0 px-4">
                 <span className="text-white/90 font-serif text-xl md:text-3xl uppercase tracking-[0.4em] whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity cursor-default">
                   {partner.name}
                 </span>
               </div>
             ))}
             {PARTNERS.map((partner, index) => (
-              <div key={`partner-2-${index}`} className="flex-shrink-0 flex justify-center px-4">
+              <div key={`partner-2-${index}`} className="flex-shrink-0 px-4">
                 <span className="text-white/90 font-serif text-xl md:text-3xl uppercase tracking-[0.4em] whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity cursor-default">
                   {partner.name}
                 </span>
@@ -252,7 +243,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section id="contact" className="relative py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-20">
@@ -275,15 +265,6 @@ const App: React.FC = () => {
                   <div>
                     <h5 className="uppercase tracking-widest text-xs text-mat-olive mb-2">Adresse E-mail</h5>
                     <a href="mailto:info@maisonartdelatable.com" className="text-gray-900 font-serif text-xl hover:text-mat-olive transition-colors">info@maisonartdelatable.com</a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-8">
-                  <div className="w-16 h-16 rounded-full border border-mat-olive/30 flex items-center justify-center text-mat-olive">
-                    <Phone size={24} />
-                  </div>
-                  <div>
-                    <h5 className="uppercase tracking-widest text-xs text-mat-olive mb-2">Téléphone</h5>
-                    <a href="tel:+2302122930" className="text-gray-900 font-serif text-xl hover:text-mat-olive transition-colors">+230 212 2930</a>
                   </div>
                 </div>
               </div>
@@ -314,8 +295,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white py-16 border-t border-gray-100">
+      <footer className="bg-white py-16 border-t border-gray-100 font-sans">
         <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex flex-col items-center md:items-start">
             <Logo className="w-16 h-16 mb-4" circleColor={MAT_LOGO_COLOR} />
@@ -324,7 +304,6 @@ const App: React.FC = () => {
           <div className="flex gap-8">
             <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="Instagram"><Instagram size={20} /></a>
             <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="LinkedIn"><Linkedin size={20} /></a>
-            <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="Facebook"><Facebook size={20} /></a>
           </div>
           <div className="text-right flex flex-col items-center md:items-end">
             <p className="text-xs uppercase tracking-[0.3em] text-gray-400 mb-2">Conçu pour les</p>
