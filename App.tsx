@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, Mail, MapPin, ArrowRight, Instagram, Linkedin, Facebook, Loader2 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import Logo from './components/Logo';
 import SectionHeading from './components/SectionHeading';
 import { NAV_ITEMS, PARTNERS, MAT_LOGO_COLOR } from './constants';
@@ -12,8 +11,6 @@ const App: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
-  const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1614030424754-24d1f93f181c?auto=format&fit=crop&q=80&w=1200";
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -23,46 +20,8 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const generateArtisticImage = async () => {
-      try {
-        // Vérification sécurisée de la clé API
-        const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
-        
-        if (!apiKey) {
-          console.warn("Clé API manquante. Utilisation de l'image par défaut.");
-          setGeneratedImage(FALLBACK_IMAGE);
-          setIsImageLoading(false);
-          return;
-        }
-
-        const ai = new GoogleGenAI({ apiKey });
-        const prompt = "A stunning, professional high-end minimalist photograph of a luxury table setting for 'Maison Art de la Table'. The color palette is strictly sophisticated olive green (#A8A24F) and warm off-white. Features include matte olive green ceramic dinnerware, a textured cream linen napkin, minimalist thin-stemmed glassware, and a single elegant botanical leaf. The lighting is soft, natural tropical daylight with soft artistic shadows. 8k resolution, serene and deeply elegant atmosphere, Mauritian luxury style.";
-        
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-image',
-          contents: { parts: [{ text: prompt }] },
-          config: {
-            imageConfig: {
-              aspectRatio: "3:4"
-            }
-          }
-        });
-
-        const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-        if (part?.inlineData) {
-          setGeneratedImage(`data:image/png;base64,${part.inlineData.data}`);
-        } else {
-          setGeneratedImage(FALLBACK_IMAGE);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la génération de l'image:", error);
-        setGeneratedImage(FALLBACK_IMAGE);
-      } finally {
-        setIsImageLoading(false);
-      }
-    };
-
-    generateArtisticImage();
+    setGeneratedImage("/image.png");
+    setIsImageLoading(false);
   }, []);
 
   return (
