@@ -1,15 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, MapPin, ArrowRight, Instagram, Linkedin, Facebook, Loader2 } from 'lucide-react';
-import Logo from './components/Logo';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Menu, X, Phone, Mail, MapPin, ArrowRight, Instagram, Linkedin, Facebook, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionHeading from './components/SectionHeading';
-import { NAV_ITEMS, PARTNERS, MAT_LOGO_COLOR } from './constants';
+import { NAV_ITEMS, PARTNERS, PRODUCT_SLIDES, PRODUCT_GALLERY } from './constants';
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,13 +25,37 @@ const App: React.FC = () => {
     setIsImageLoading(false);
   }, []);
 
+  const goToSlide = useCallback((index: number) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentSlide(index);
+    setTimeout(() => setIsTransitioning(false), 700);
+  }, [isTransitioning]);
+
+  const nextSlide = useCallback(() => {
+    goToSlide((currentSlide + 1) % PRODUCT_SLIDES.length);
+  }, [currentSlide, goToSlide]);
+
+  const prevSlide = useCallback(() => {
+    goToSlide((currentSlide - 1 + PRODUCT_SLIDES.length) % PRODUCT_SLIDES.length);
+  }, [currentSlide, goToSlide]);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
+
   return (
     <div className="min-h-screen">
       <nav className={`fixed w-full z-50 transition-all duration-500 py-6 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent'}`}>
         <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
           <div className="flex items-center">
-             <a href="#home" className={`text-sm md:text-base tracking-[0.3em] font-serif uppercase transition-colors duration-500 hover:text-mat-olive ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
-               Maison Art de la Table
+             <a href="#home">
+               <img
+                 src="/logo-mat-transparent.png"
+                 alt="Maison Art de la Table"
+                 className={`h-24 md:h-28 -my-8 w-auto transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`}
+               />
              </a>
           </div>
 
@@ -68,7 +93,7 @@ const App: React.FC = () => {
               </a>
             ))}
             <div className="pt-12 text-center">
-               <span className="text-xs uppercase tracking-[0.4em] text-mat-olive">Maison Art de la Table</span>
+               <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-16 w-auto mx-auto" />
             </div>
           </div>
         )}
@@ -77,17 +102,18 @@ const App: React.FC = () => {
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-mat-olive scroll-mt-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent z-10" />
         <div className="relative z-20 text-center px-6">
-          <div className="mb-12 flex justify-center">
-            <Logo className="w-48 h-48 animate-pulse-slow" circleColor="white" textColor={MAT_LOGO_COLOR} />
+          <div className="mb-8 flex justify-center">
+            <img
+              src="/logo-mat-transparent.png"
+              alt="Maison Art de la Table"
+              className="w-64 md:w-80 lg:w-96 h-auto brightness-0 invert"
+            />
           </div>
-          <h1 className="text-white text-6xl md:text-8xl lg:text-9xl mb-6 font-serif tracking-tighter">
-            Maison Art de la Table
-          </h1>
           <p className="text-white/80 text-lg md:text-xl uppercase tracking-[0.5em] max-w-2xl mx-auto font-light">
             Île Maurice • Novembre 2025
           </p>
           <div className="mt-12">
-             <a href="#about" className="inline-block px-10 py-4 border border-white/40 text-white uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-mat-olive transition-all duration-300">
+             <a href="#about" className="inline-block px-10 py-4 border border-white/40 text-white uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-gray-900 transition-all duration-300">
                Explorer Notre Vision
              </a>
           </div>
@@ -142,7 +168,7 @@ const App: React.FC = () => {
 
       <section id="mission" className="py-32 bg-mat-olive relative overflow-hidden scroll-mt-20">
         <div className="absolute top-0 right-0 p-12 opacity-10">
-           <Logo className="w-96 h-96" />
+           <img src="/logo-mat-transparent.png" alt="" className="w-96 h-96 object-contain brightness-0 invert" />
         </div>
         <div className="container mx-auto px-6 md:px-12 relative z-10 text-center">
           <blockquote className="max-w-4xl mx-auto">
@@ -176,76 +202,160 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-mat-olive overflow-hidden relative scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12 mb-16 relative z-10 text-center">
-           <span className="text-xs uppercase tracking-[0.4em] text-white/60 mb-4 block font-serif italic">Curateurs de Marques de Prestige</span>
+      <section id="collections" className="py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
+        <div className="container mx-auto px-6 md:px-12">
+          <SectionHeading subtitle="Nos Collections" title="L'Art de Recevoir" />
         </div>
-        <div className="relative z-10">
-          <div className="animate-marquee flex gap-12 md:gap-32 items-center">
-            {PARTNERS.map((partner, index) => (
-              <div key={`partner-1-${index}`} className="flex-shrink-0 px-4">
-                <span className="text-white/90 font-serif text-xl md:text-3xl uppercase tracking-[0.4em] whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity cursor-default">
-                  {partner.name}
-                </span>
-              </div>
-            ))}
-            {PARTNERS.map((partner, index) => (
-              <div key={`partner-2-${index}`} className="flex-shrink-0 px-4">
-                <span className="text-white/90 font-serif text-xl md:text-3xl uppercase tracking-[0.4em] whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity cursor-default">
-                  {partner.name}
-                </span>
+
+        <div className="relative w-full max-w-7xl mx-auto mt-8 overflow-hidden group/carousel">
+          <div className="relative aspect-[21/9] bg-gray-100 overflow-hidden">
+            {PRODUCT_SLIDES.map((slide, index) => (
+              <div
+                key={index}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                  index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                }`}
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
+                  <span className="text-xs uppercase tracking-[0.4em] text-white/70 mb-2 block">{slide.brand}</span>
+                  <h3 className="text-white text-2xl md:text-4xl font-serif">{slide.title}</h3>
+                </div>
               </div>
             ))}
           </div>
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-mat-olive to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-mat-olive to-transparent z-10" />
+
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+            aria-label="Diapositive précédente"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+            aria-label="Diapositive suivante"
+          >
+            <ChevronRight size={20} />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
+            {PRODUCT_SLIDES.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`h-[2px] transition-all duration-500 ${
+                  index === currentSlide ? 'w-12 bg-white' : 'w-6 bg-white/40 hover:bg-white/60'
+                }`}
+                aria-label={`Aller à la diapositive ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="container mx-auto px-6 md:px-12 mt-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {PRODUCT_GALLERY.map((item, index) => (
+              <div
+                key={index}
+                className={`group relative overflow-hidden ${
+                  index === 0 ? 'row-span-2' : ''
+                } ${index === 3 ? 'col-span-2' : ''}`}
+              >
+                <div className={`relative overflow-hidden bg-gray-200 ${
+                  index === 0 ? 'h-full min-h-[400px] md:min-h-[600px]' : 'aspect-square'
+                } ${index === 3 ? 'aspect-[2/1]' : ''}`}>
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                    <span className="text-xs uppercase tracking-[0.4em] text-white/70 mb-2">{item.brand}</span>
+                    <h4 className="text-white text-lg md:text-2xl font-serif text-center px-4">{item.title}</h4>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section id="contact" className="relative py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
+      <section className="py-24 bg-white overflow-hidden relative scroll-mt-20">
+        <div className="container mx-auto px-6 md:px-12 mb-16 relative z-10 text-center">
+          <span className="text-xs uppercase tracking-[0.4em] text-mat-olive mb-4 block font-serif italic">Nos Partenaires de Prestige</span>
+          <div className="w-16 h-[1px] bg-mat-olive/30 mx-auto mt-6" />
+        </div>
+        <div className="relative z-10">
+          <div className="animate-marquee flex items-center">
+            {[...PARTNERS, ...PARTNERS].map((partner, index) => (
+              <div key={`partner-${index}`} className="flex-shrink-0 px-8 md:px-16">
+                <div className="w-32 h-20 md:w-44 md:h-24 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
+                  <img
+                    src={partner.logoUrl}
+                    alt={partner.name}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
+        </div>
+      </section>
+
+      <section id="contact" className="relative py-24 lg:py-40 bg-mat-olive scroll-mt-20">
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-20">
             <div>
-              <SectionHeading subtitle="Contact" title="Commençons une Conversation" />
+              <SectionHeading subtitle="Contact" title="Commençons une Conversation" light />
               <div className="space-y-12 mt-16">
                 <div className="flex items-start gap-8">
-                  <div className="w-16 h-16 rounded-full border border-mat-olive/30 flex items-center justify-center text-mat-olive">
+                  <div className="w-16 h-16 rounded-full border border-white/30 flex items-center justify-center text-white">
                     <MapPin size={24} />
                   </div>
                   <div>
-                    <h5 className="uppercase tracking-widest text-xs text-mat-olive mb-2">Adresse du Showroom</h5>
-                    <p className="text-gray-900 font-serif text-xl">Ken Lee House, M3<br />Riche-Terre, Île Maurice</p>
+                    <h5 className="uppercase tracking-widest text-xs text-white/60 mb-2">Adresse du Showroom</h5>
+                    <p className="text-white font-serif text-xl">Ken Lee House, M3<br />Riche-Terre, Île Maurice</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-8">
-                  <div className="w-16 h-16 rounded-full border border-mat-olive/30 flex items-center justify-center text-mat-olive">
+                  <div className="w-16 h-16 rounded-full border border-white/30 flex items-center justify-center text-white">
                     <Mail size={24} />
                   </div>
                   <div>
-                    <h5 className="uppercase tracking-widest text-xs text-mat-olive mb-2">Adresse E-mail</h5>
-                    <a href="mailto:info@maisonartdelatable.com" className="text-gray-900 font-serif text-xl hover:text-mat-olive transition-colors">info@maisonartdelatable.com</a>
+                    <h5 className="uppercase tracking-widest text-xs text-white/60 mb-2">Adresse E-mail</h5>
+                    <a href="mailto:info@maisonartdelatable.com" className="text-white font-serif text-xl hover:text-white/80 transition-colors">info@maisonartdelatable.com</a>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-10 md:p-16 shadow-xl relative">
-              <h3 className="text-3xl font-serif mb-8 text-gray-900">Envoyer un Message</h3>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-10 md:p-16 relative">
+              <h3 className="text-3xl font-serif mb-8 text-white">Envoyer un Message</h3>
               <form className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-400">Nom</label>
-                    <input type="text" className="w-full bg-transparent border-b border-gray-200 py-3 focus:outline-none focus:border-mat-olive transition-colors" />
+                    <label className="text-xs uppercase tracking-widest text-white/60">Nom</label>
+                    <input type="text" className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-400">E-mail</label>
-                    <input type="email" className="w-full bg-transparent border-b border-gray-200 py-3 focus:outline-none focus:border-mat-olive transition-colors" />
+                    <label className="text-xs uppercase tracking-widest text-white/60">E-mail</label>
+                    <input type="email" className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-gray-400">Message</label>
-                  <textarea rows={4} className="w-full bg-transparent border-b border-gray-200 py-3 focus:outline-none focus:border-mat-olive transition-colors resize-none"></textarea>
+                  <label className="text-xs uppercase tracking-widest text-white/60">Message</label>
+                  <textarea rows={4} className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
                 </div>
-                <button className="flex items-center gap-4 bg-mat-olive text-white px-10 py-4 uppercase tracking-[0.2em] text-xs hover:bg-black transition-all duration-300">
+                <button className="flex items-center gap-4 bg-white text-mat-olive px-10 py-4 uppercase tracking-[0.2em] text-xs hover:bg-gray-900 hover:text-white transition-all duration-300">
                   Envoyer le Message <ArrowRight size={16} />
                 </button>
               </form>
@@ -257,7 +367,7 @@ const App: React.FC = () => {
       <footer className="bg-white py-16 border-t border-gray-100 font-sans">
         <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex flex-col items-center md:items-start">
-            <Logo className="w-16 h-16 mb-4" circleColor={MAT_LOGO_COLOR} />
+            <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-16 w-auto mb-4" />
             <p className="text-xs uppercase tracking-widest text-gray-400">© 2025 Maison Art de la Table. Tous droits réservés.</p>
           </div>
           <div className="flex gap-8">
