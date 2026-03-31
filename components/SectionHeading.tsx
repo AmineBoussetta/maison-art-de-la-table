@@ -9,16 +9,16 @@ interface SectionHeadingProps {
 
 const SectionHeading: React.FC<SectionHeadingProps> = ({ title, subtitle, light = false }) => {
   return (
-    <div className="mb-16">
+    <div className="mb-6 sm:mb-8">
       {subtitle && (
-        <span className={`text-xs uppercase tracking-[0.4em] block mb-4 ${light ? 'text-gray-300' : 'text-mat-olive'}`}>
+        <span className={`text-[10px] sm:text-xs uppercase tracking-[0.3em] block mb-2 sm:mb-3 ${light ? 'text-gray-300' : 'text-mat-olive'}`}>
           {subtitle}
         </span>
       )}
-      <h2 className={`text-4xl md:text-5xl lg:text-6xl font-serif ${light ? 'text-white' : 'text-gray-900'}`}>
+      <h2 className={`text-xl sm:text-2xl md:text-3xl font-serif ${light ? 'text-white' : 'text-gray-900'}`}>
         {title}
       </h2>
-      <div className={`w-24 h-[1px] mt-8 ${light ? 'bg-white/30' : 'bg-mat-olive/50'}`} />
+      <div className={`w-12 sm:w-16 h-[1px] mt-3 sm:mt-4 ${light ? 'bg-white/30' : 'bg-mat-olive/50'}`} />
     </div>
   );
 };

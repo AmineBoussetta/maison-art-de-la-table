@@ -1,16 +1,19 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Menu, X, Phone, Mail, MapPin, ArrowRight, Instagram, Linkedin, Facebook, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Menu, X, Mail, MapPin, ArrowRight, Instagram, Linkedin, ChevronLeft, ChevronRight, MessageCircle, Package, Globe, Home, Compass, Award, DollarSign } from 'lucide-react';
 import SectionHeading from './components/SectionHeading';
-import { NAV_ITEMS, PARTNERS, PRODUCT_SLIDES, PRODUCT_GALLERY } from './constants';
+import { NAV_KEYS, PARTNERS, PRODUCTS } from './constants';
+import { translations, Lang } from './translations';
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [isImageLoading, setIsImageLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [lang, setLang] = useState<Lang>('en');
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const t = useCallback((key: string) => translations[lang][key] ?? key, [lang]);
+
+  const toggleLang = () => setLang(lang === 'en' ? 'fr' : 'en');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,284 +23,138 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    setGeneratedImage("/image.png");
-    setIsImageLoading(false);
+  const scrollCarousel = useCallback((direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    const container = carouselRef.current;
+    const cardWidth = container.querySelector('div')?.offsetWidth ?? 300;
+    const scrollAmount = (cardWidth + 24) * 5;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (direction === 'right') {
+      if (container.scrollLeft >= maxScroll - 10) {
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        const newPos = Math.min(container.scrollLeft + scrollAmount, maxScroll);
+        container.scrollTo({ left: newPos, behavior: 'smooth' });
+      }
+    } else {
+      if (container.scrollLeft <= 10) {
+        container.scrollTo({ left: maxScroll, behavior: 'smooth' });
+      } else {
+        const newPos = Math.max(container.scrollLeft - scrollAmount, 0);
+        container.scrollTo({ left: newPos, behavior: 'smooth' });
+      }
+    }
   }, []);
 
-  const goToSlide = useCallback((index: number) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrentSlide(index);
-    setTimeout(() => setIsTransitioning(false), 700);
-  }, [isTransitioning]);
-
-  const nextSlide = useCallback(() => {
-    goToSlide((currentSlide + 1) % PRODUCT_SLIDES.length);
-  }, [currentSlide, goToSlide]);
-
-  const prevSlide = useCallback(() => {
-    goToSlide((currentSlide - 1 + PRODUCT_SLIDES.length) % PRODUCT_SLIDES.length);
-  }, [currentSlide, goToSlide]);
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, [nextSlide]);
+  const langToggle = (
+    <button
+      onClick={toggleLang}
+      className="flex items-center gap-1 text-xs uppercase tracking-[0.2em]"
+    >
+      <span className={lang === 'fr' ? 'text-mat-olive font-medium' : isScrolled ? 'text-gray-400' : 'text-white/50'}>FR</span>
+      <span className={isScrolled ? 'text-gray-300' : 'text-white/30'}>|</span>
+      <span className={lang === 'en' ? 'text-mat-olive font-medium' : isScrolled ? 'text-gray-400' : 'text-white/50'}>EN</span>
+    </button>
+  );
 
   return (
-    <div className="min-h-screen">
-      <nav className={`fixed w-full z-50 transition-all duration-500 py-6 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent'}`}>
-        <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
+    <div className="min-h-screen overflow-x-hidden">
+      <nav className={`fixed w-full z-50 transition-all duration-500 py-2 ${isScrolled ? 'bg-white shadow-md py-1' : 'bg-transparent'}`}>
+        <div className="w-full px-4 sm:px-6 md:px-12 flex justify-between items-center">
           <div className="flex items-center">
              <a href="#home">
                <img
                  src="/logo-mat-transparent.png"
                  alt="Maison Art de la Table"
-                 className={`h-24 md:h-28 -my-8 w-auto transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`}
+                 className={`h-12 sm:h-16 md:h-20 -my-4 w-auto transition-all duration-500 ${isScrolled ? '' : 'brightness-0 invert'}`}
                />
              </a>
           </div>
 
-          <div className="hidden md:flex items-center space-x-12">
-            {NAV_ITEMS.map((item) => (
+          <div className="hidden md:flex items-center space-x-8">
+            {NAV_KEYS.map((item) => (
               <a 
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 className={`text-xs uppercase tracking-[0.3em] hover:text-mat-olive transition-colors ${isScrolled ? 'text-gray-600' : 'text-white/80'}`}
               >
-                {item.label}
+                {t(item.key)}
               </a>
             ))}
+            <div className="ml-4 pl-4 border-l border-gray-300/30">
+              {langToggle}
+            </div>
           </div>
 
-          <button 
-            className="md:hidden p-2 transition-colors duration-500"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={28} className="text-gray-900" /> : <Menu size={28} className={isScrolled ? 'text-gray-900' : 'text-white'} />}
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            {langToggle}
+            <button 
+              className="p-2 transition-colors duration-500"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={24} className="text-gray-900" /> : <Menu size={24} className={isScrolled ? 'text-gray-900' : 'text-white'} />}
+            </button>
+          </div>
         </div>
 
         {isMenuOpen && (
-          <div className="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-8 md:hidden animate-in fade-in duration-300">
-             {NAV_ITEMS.map((item) => (
+          <div className="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-6 md:hidden animate-in fade-in duration-300">
+            <button
+              className="absolute top-4 right-4 p-2"
+              onClick={() => setIsMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={24} className="text-gray-900" />
+            </button>
+             {NAV_KEYS.map((item) => (
               <a 
-                key={item.label}
+                key={item.key}
                 href={item.href}
-                className="text-lg uppercase tracking-[0.3em] text-gray-800 hover:text-mat-olive transition-colors"
+                className="text-base sm:text-lg uppercase tracking-[0.3em] text-gray-800 hover:text-mat-olive transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {item.label}
+                {t(item.key)}
               </a>
             ))}
-            <div className="pt-12 text-center">
-               <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-16 w-auto mx-auto" />
+            <div className="pt-8 text-center">
+               <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-12 w-auto mx-auto" />
             </div>
           </div>
         )}
       </nav>
 
-      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-mat-olive scroll-mt-0">
+      <section id="home" className="relative pt-16 flex items-center justify-center overflow-hidden bg-mat-olive scroll-mt-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent z-10" />
-        <div className="relative z-20 text-center px-6">
-          <div className="mb-8 flex justify-center">
+        <div className="relative z-20 text-center px-4 sm:px-6 pb-12 sm:pb-16">
+          <div className="mb-6 sm:mb-8 flex justify-center">
             <img
               src="/logo-mat-transparent.png"
               alt="Maison Art de la Table"
-              className="w-64 md:w-80 lg:w-96 h-auto brightness-0 invert"
+              className="w-48 sm:w-64 md:w-80 lg:w-96 h-auto brightness-0 invert"
             />
           </div>
-          <p className="text-white/80 text-lg md:text-xl uppercase tracking-[0.5em] max-w-2xl mx-auto font-light">
-            Île Maurice • Novembre 2025
+          <p className="text-white/80 text-xs sm:text-sm md:text-base uppercase tracking-[0.3em] sm:tracking-[0.4em] max-w-2xl mx-auto font-light">
+            {t('hero.locations')}
           </p>
-          <div className="mt-12">
-             <a href="#about" className="inline-block px-10 py-4 border border-white/40 text-white uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-gray-900 transition-all duration-300">
-               Explorer Notre Vision
+          <p className="text-white/60 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-2 sm:mt-3 font-light">
+            {t('hero.based')}
+          </p>
+          <div className="mt-8 sm:mt-12">
+             <a href="#about" className="inline-block px-8 sm:px-10 py-3 sm:py-4 border border-white/40 text-white uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-gray-900 transition-all duration-300">
+               {t('hero.cta')}
              </a>
           </div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-          <div className="w-[1px] h-20 bg-gradient-to-b from-white to-transparent" />
-        </div>
       </section>
 
-      <section id="about" className="py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <SectionHeading subtitle="À Propos" title="Une Passion pour le Design Authentique" />
-            <p className="text-gray-600 text-lg leading-relaxed mb-8">
-              Maison Art De La Table est née d'une passion profonde pour le design authentique et l'artisanat d'exception. Nous apportons une vision globale renouvelée, une structure moderne et une expertise éprouvée dans la distribution internationale des arts de la table.
-            </p>
-            <p className="text-gray-600 text-lg leading-relaxed mb-12">
-              Notre mission est de connecter les plus beaux arts de la table du monde aux destinations les plus exceptionnelles de l'Océan Indien.
-            </p>
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <h4 className="font-serif text-2xl text-mat-olive mb-2">Vision Globale</h4>
-                <p className="text-sm text-gray-500">Présence au Canada, aux États-Unis, en Europe, en Tunisie et à l'Île Maurice.</p>
-              </div>
-              <div>
-                <h4 className="font-serif text-2xl text-mat-olive mb-2">Expertise Éprouvée</h4>
-                <p className="text-sm text-gray-500">Des décennies d'expérience en logistique et distribution internationale.</p>
-              </div>
-            </div>
-          </div>
-          <div className="relative group min-h-[600px] flex items-center justify-center bg-gray-200 shadow-2xl">
-            {isImageLoading ? (
-              <div className="flex flex-col items-center gap-4 text-mat-olive">
-                <Loader2 className="animate-spin w-12 h-12" />
-                <span className="text-xs uppercase tracking-widest font-serif italic">Création de votre mise en table...</span>
-              </div>
-            ) : (
-              <>
-                <div className="absolute -inset-4 border border-mat-olive/20 -z-10 transition-transform group-hover:translate-x-2 group-hover:translate-y-2 duration-700" />
-                {generatedImage && (
-                  <img 
-                    src={generatedImage} 
-                    alt="Mise en table artistique"
-                    className="w-full h-[600px] object-cover transition-all duration-700 animate-in fade-in zoom-in-95"
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section id="mission" className="py-32 bg-mat-olive relative overflow-hidden scroll-mt-20">
-        <div className="absolute top-0 right-0 p-12 opacity-10">
-           <img src="/logo-mat-transparent.png" alt="" className="w-96 h-96 object-contain brightness-0 invert" />
-        </div>
-        <div className="container mx-auto px-6 md:px-12 relative z-10 text-center">
-          <blockquote className="max-w-4xl mx-auto">
-            <p className="text-white text-3xl md:text-5xl font-serif leading-tight italic mb-12">
-              “L'hospitalité consiste à créer des émotions. Elle vit dans les détails — la texture d'une assiette, le poids d'une tasse, la beauté de ce qui entoure un repas.”
-            </p>
-            <footer className="text-white/80 uppercase tracking-[0.4em] text-sm">
-              — Ghassen Ghariani
-            </footer>
-          </blockquote>
-        </div>
-      </section>
-
-      <section id="services" className="py-24 lg:py-40 bg-white scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12">
-          <SectionHeading subtitle="L'Avantage Stratégique" title="Nos Forces et Services" />
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mt-20">
-            {[
-              { title: "Expertise Internationale", desc: "Logistique optimisée et service après-vente sur plusieurs continents." },
-              { title: "Curation Stratégique", desc: "Compréhension approfondie des besoins hôteliers pour sélectionner les meilleures collections." },
-              { title: "Présence Locale", desc: "Showroom M3 à Ken Lee House, Riche-Terre pour une réactivité et un suivi rapides." },
-              { title: "Logistique Fiable", desc: "Gestion efficace des stocks et opérations régionales consolidées." }
-            ].map((strength, i) => (
-              <div key={i} className="border-l border-mat-olive/30 pl-8 group hover:border-mat-olive transition-colors duration-500">
-                <span className="text-mat-olive font-serif text-3xl block mb-6 opacity-40 group-hover:opacity-100 transition-opacity">0{i+1}</span>
-                <h3 className="text-xl font-serif text-gray-900 mb-4">{strength.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{strength.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="collections" className="py-24 lg:py-40 bg-[#F5F5F0] scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12">
-          <SectionHeading subtitle="Nos Collections" title="L'Art de Recevoir" />
-        </div>
-
-        <div className="relative w-full max-w-7xl mx-auto mt-8 overflow-hidden group/carousel">
-          <div className="relative aspect-[21/9] bg-gray-100 overflow-hidden">
-            {PRODUCT_SLIDES.map((slide, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-                  index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-                }`}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-                  <span className="text-xs uppercase tracking-[0.4em] text-white/70 mb-2 block">{slide.brand}</span>
-                  <h3 className="text-white text-2xl md:text-4xl font-serif">{slide.title}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-            aria-label="Diapositive précédente"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-900 opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-            aria-label="Diapositive suivante"
-          >
-            <ChevronRight size={20} />
-          </button>
-
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
-            {PRODUCT_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`h-[2px] transition-all duration-500 ${
-                  index === currentSlide ? 'w-12 bg-white' : 'w-6 bg-white/40 hover:bg-white/60'
-                }`}
-                aria-label={`Aller à la diapositive ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="container mx-auto px-6 md:px-12 mt-20">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            {PRODUCT_GALLERY.map((item, index) => (
-              <div
-                key={index}
-                className={`group relative overflow-hidden ${
-                  index === 0 ? 'row-span-2' : ''
-                } ${index === 3 ? 'col-span-2' : ''}`}
-              >
-                <div className={`relative overflow-hidden bg-gray-200 ${
-                  index === 0 ? 'h-full min-h-[400px] md:min-h-[600px]' : 'aspect-square'
-                } ${index === 3 ? 'aspect-[2/1]' : ''}`}>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
-                    <span className="text-xs uppercase tracking-[0.4em] text-white/70 mb-2">{item.brand}</span>
-                    <h4 className="text-white text-lg md:text-2xl font-serif text-center px-4">{item.title}</h4>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-white overflow-hidden relative scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12 mb-16 relative z-10 text-center">
-          <span className="text-xs uppercase tracking-[0.4em] text-mat-olive mb-4 block font-serif italic">Nos Partenaires de Prestige</span>
-          <div className="w-16 h-[1px] bg-mat-olive/30 mx-auto mt-6" />
-        </div>
+      <section className="py-4 sm:py-6 bg-mat-olive overflow-hidden relative">
         <div className="relative z-10">
           <div className="animate-marquee flex items-center">
             {[...PARTNERS, ...PARTNERS].map((partner, index) => (
-              <div key={`partner-${index}`} className="flex-shrink-0 px-8 md:px-16">
-                <div className="w-32 h-20 md:w-44 md:h-24 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
+              <div key={`partner-${index}`} className="flex-shrink-0 px-6 sm:px-8 md:px-16">
+                <div className="w-24 h-16 sm:w-32 sm:h-20 md:w-44 md:h-24 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
                   <img
                     src={partner.logoUrl}
                     alt={partner.name}
@@ -307,56 +164,196 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-mat-olive to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-mat-olive to-transparent z-10" />
         </div>
       </section>
 
-      <section id="contact" className="relative py-24 lg:py-40 bg-mat-olive scroll-mt-20">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="grid lg:grid-cols-2 gap-20">
-            <div>
-              <SectionHeading subtitle="Contact" title="Commençons une Conversation" light />
-              <div className="space-y-12 mt-16">
-                <div className="flex items-start gap-8">
-                  <div className="w-16 h-16 rounded-full border border-white/30 flex items-center justify-center text-white">
-                    <MapPin size={24} />
+      <section id="collections" className="pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pt-12 lg:pb-24 bg-[#F5F5F0] scroll-mt-20">
+        <div className="px-4 sm:px-6 md:px-12">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex-1 h-[1px] bg-[#A8A24F] opacity-30" />
+            <h2 className="text-base sm:text-lg md:text-xl font-serif text-mat-olive whitespace-nowrap">{t('collections.title')}</h2>
+            <div className="flex-1 h-[1px] bg-[#A8A24F] opacity-30" />
+          </div>
+        </div>
+
+        <div className="relative mt-6 sm:mt-10 group/carousel">
+          <div className="px-4 sm:px-6 md:px-12">
+            <div
+              ref={carouselRef}
+              className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {PRODUCTS.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-[44%] sm:w-[30%] lg:w-[calc((100%-5*1.5rem)/6)] group"
+                >
+                  <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                    <img
+                      src={item.image}
+                      alt={t(item.titleKey)}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   </div>
-                  <div>
-                    <h5 className="uppercase tracking-widest text-xs text-white/60 mb-2">Adresse du Showroom</h5>
-                    <p className="text-white font-serif text-xl">Ken Lee House, M3<br />Riche-Terre, Île Maurice</p>
+                  <div className="mt-2 sm:mt-3">
+                    <h4 className="text-gray-900 font-serif text-xs sm:text-sm">{t(item.titleKey)}</h4>
                   </div>
                 </div>
-                <div className="flex items-start gap-8">
-                  <div className="w-16 h-16 rounded-full border border-white/30 flex items-center justify-center text-white">
-                    <Mail size={24} />
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={() => scrollCarousel('left')}
+            className="absolute left-1 sm:left-2 md:left-6 top-[calc(50%-40px)] -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all md:opacity-0 md:group-hover/carousel:opacity-100"
+            aria-label="Previous"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={() => scrollCarousel('right')}
+            className="absolute right-1 sm:right-2 md:right-6 top-[calc(50%-40px)] -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all md:opacity-0 md:group-hover/carousel:opacity-100"
+            aria-label="Next"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </section>
+
+      <section id="about" className="pt-6 pb-12 lg:pt-8 lg:pb-24 bg-[#F5F5F0] scroll-mt-20">
+        <div className="px-4 sm:px-6 md:px-12 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+          <div>
+            <SectionHeading subtitle={t('about.subtitle')} title={t('about.title')} />
+            <div className="space-y-4 sm:space-y-5">
+              {['about.full.p1', 'about.full.p2', 'about.full.p3', 'about.full.p4', 'about.full.p5'].map((key) => (
+                <p key={key} className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                  {t(key)}
+                </p>
+              ))}
+            </div>
+          </div>
+          <div className="relative group h-[350px] sm:h-[450px] lg:h-[600px] flex items-center justify-center bg-gray-200 shadow-2xl">
+            <div className="absolute -inset-4 border border-mat-olive/20 -z-10 transition-transform group-hover:translate-x-2 group-hover:translate-y-2 duration-700 hidden lg:block" />
+            <img 
+              src="/image.png" 
+              alt="Artistic table setting"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="pt-6 pb-12 lg:pt-8 lg:pb-24 bg-[#F5F5F0]">
+        <div className="px-4 sm:px-6 md:px-12 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+          <div className="relative group h-[350px] sm:h-[450px] lg:h-[600px] flex items-center justify-center bg-gray-200 shadow-2xl order-2 lg:order-1">
+            <img 
+              src="/products/dining-experience.png" 
+              alt="Table setting"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="order-1 lg:order-2">
+            <SectionHeading subtitle={t('mission.subtitle')} title={t('mission.title')} />
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 italic font-serif">
+              {t('mission.quote')}
+            </p>
+            <p className="text-gray-500 text-[10px] sm:text-xs uppercase tracking-[0.3em]">
+              — Ghassen Ghariani
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" className="py-12 sm:py-16 lg:py-24 bg-[#F5F5F0] scroll-mt-20">
+        <div className="px-4 sm:px-6 md:px-12">
+          <SectionHeading subtitle={t('strengths.subtitle')} title={t('strengths.title')} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 mt-8 sm:mt-12 lg:mt-14">
+            {([
+              { icon: Package, idx: 1 },
+              { icon: Globe, idx: 2 },
+              { icon: Home, idx: 3 },
+              { icon: Compass, idx: 4 },
+              { icon: Award, idx: 5 },
+              { icon: DollarSign, idx: 6 },
+            ]).map(({ icon: Icon, idx }) => (
+              <div key={idx} className="flex items-start gap-4 sm:gap-5 group">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-mat-olive/30 flex items-center justify-center text-mat-olive flex-shrink-0 group-hover:bg-mat-olive group-hover:text-white transition-all duration-500">
+                  <Icon size={22} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm sm:text-base font-serif text-gray-900 mb-1.5 sm:mb-2">{t(`strengths.${idx}.title`)}</h3>
+                  <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed">{t(`strengths.${idx}.desc`)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="relative py-12 sm:py-16 lg:py-24 bg-mat-olive scroll-mt-20">
+        <div className="px-4 sm:px-6 md:px-12">
+          <div className="grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-20">
+            <div>
+              <SectionHeading subtitle={t('contact.subtitle')} title={t('contact.title')} light />
+              <div className="space-y-8 sm:space-y-12 mt-10 sm:mt-16">
+                <div className="flex items-start gap-4 sm:gap-8">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border border-white/30 flex items-center justify-center text-white flex-shrink-0">
+                    <MapPin size={20} className="sm:hidden" />
+                    <MapPin size={24} className="hidden sm:block" />
                   </div>
                   <div>
-                    <h5 className="uppercase tracking-widest text-xs text-white/60 mb-2">Adresse E-mail</h5>
-                    <a href="mailto:info@maisonartdelatable.com" className="text-white font-serif text-xl hover:text-white/80 transition-colors">info@maisonartdelatable.com</a>
+                    <h5 className="uppercase tracking-widest text-[10px] sm:text-xs text-white/60 mb-1">{t('contact.address.label')}</h5>
+                    <p className="text-white font-serif text-sm sm:text-base">
+                      {t('contact.address.value')}<br />
+                      {t('contact.address.line2')}<br />
+                      {t('contact.address.city')}
+                    </p>
+                    <p className="text-white/50 text-[10px] sm:text-xs italic mt-1.5">{t('contact.address.appointment')}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 sm:gap-8">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border border-white/30 flex items-center justify-center text-white flex-shrink-0">
+                    <Mail size={20} className="sm:hidden" />
+                    <Mail size={24} className="hidden sm:block" />
+                  </div>
+                  <div>
+                    <h5 className="uppercase tracking-widest text-[10px] sm:text-xs text-white/60 mb-1">{t('contact.email.label')}</h5>
+                    <a href="mailto:info@maisonartdelatable.com" className="text-white font-serif text-sm sm:text-base hover:text-white/80 transition-colors break-all sm:break-normal">info@maisonartdelatable.com</a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 sm:gap-8">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border border-white/30 flex items-center justify-center text-white flex-shrink-0">
+                    <MessageCircle size={20} className="sm:hidden" />
+                    <MessageCircle size={24} className="hidden sm:block" />
+                  </div>
+                  <div>
+                    <h5 className="uppercase tracking-widest text-[10px] sm:text-xs text-white/60 mb-1">{t('contact.whatsapp.label')}</h5>
+                    <a href="https://wa.me/23058580930" target="_blank" rel="noopener noreferrer" className="text-white font-serif text-sm sm:text-base hover:text-white/80 transition-colors">{t('contact.whatsapp.value')}</a>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-10 md:p-16 relative">
-              <h3 className="text-3xl font-serif mb-8 text-white">Envoyer un Message</h3>
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 sm:p-10 md:p-16 relative">
+              <h3 className="text-lg sm:text-xl font-serif mb-4 sm:mb-6 text-white">{t('contact.form.title')}</h3>
+              <form className="space-y-4 sm:space-y-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-white/60">Nom</label>
-                    <input type="text" className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.name')}</label>
+                    <input type="text" className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-white/60">E-mail</label>
-                    <input type="email" className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.email')}</label>
+                    <input type="email" className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-white/60">Message</label>
-                  <textarea rows={4} className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
+                  <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.message')}</label>
+                  <textarea rows={4} className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
                 </div>
-                <button className="flex items-center gap-4 bg-white text-mat-olive px-10 py-4 uppercase tracking-[0.2em] text-xs hover:bg-gray-900 hover:text-white transition-all duration-300">
-                  Envoyer le Message <ArrowRight size={16} />
+                <button className="flex items-center gap-2 sm:gap-3 bg-white text-mat-olive px-5 sm:px-8 py-2.5 sm:py-3 uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-gray-900 hover:text-white transition-all duration-300">
+                  {t('contact.form.submit')} <ArrowRight size={16} />
                 </button>
               </form>
             </div>
@@ -364,19 +361,19 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <footer className="bg-white py-16 border-t border-gray-100 font-sans">
-        <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-12">
+      <footer className="bg-white py-8 sm:py-12 border-t border-gray-100 font-sans">
+        <div className="px-4 sm:px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8 sm:gap-12">
           <div className="flex flex-col items-center md:items-start">
-            <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-16 w-auto mb-4" />
-            <p className="text-xs uppercase tracking-widest text-gray-400">© 2025 Maison Art de la Table. Tous droits réservés.</p>
+            <img src="/logo-mat-transparent.png" alt="Maison Art de la Table" className="h-12 sm:h-16 w-auto mb-3 sm:mb-4" />
+            <p className="text-xs uppercase tracking-widest text-gray-400 text-center md:text-left">{t('footer.rights')}</p>
           </div>
-          <div className="flex gap-8">
+          <div className="flex gap-6 sm:gap-8">
             <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="Instagram"><Instagram size={20} /></a>
             <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="LinkedIn"><Linkedin size={20} /></a>
           </div>
-          <div className="text-right flex flex-col items-center md:items-end">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-400 mb-2">Conçu pour les</p>
-            <p className="text-sm font-serif text-gray-900 italic">Destinations d'Exception</p>
+          <div className="text-center md:text-right flex flex-col items-center md:items-end">
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-400 mb-2">{t('footer.tagline.top')}</p>
+            <p className="text-sm font-serif text-gray-900 italic">{t('footer.tagline.bottom')}</p>
           </div>
         </div>
       </footer>

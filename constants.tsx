@@ -1,63 +1,37 @@
+import { Partner } from './types';
 
-import { NavItem, Partner, ProductSlide } from './types';
+export interface ProductItem {
+  image: string;
+  titleKey: string;
+}
 
-export const NAV_ITEMS: NavItem[] = [
-  { label: 'Accueil', href: '#home' },
-  { label: 'À Propos', href: '#about' },
-  { label: 'Notre Mission', href: '#mission' },
-  { label: 'Services', href: '#services' },
-  { label: 'Collections', href: '#collections' },
-  { label: 'Contact', href: '#contact' }
+export const NAV_KEYS = [
+  { key: 'nav.home', href: '#home' },
+  { key: 'nav.collections', href: '#collections' },
+  { key: 'nav.about', href: '#about' },
+  { key: 'nav.services', href: '#services' },
+  { key: 'nav.contact', href: '#contact' }
 ];
 
-export const PRODUCT_SLIDES: ProductSlide[] = [
-  {
-    image: '/products/ambiance-2.png',
-    title: 'L\'Élégance au Quotidien',
-    brand: 'Art de la Table'
-  },
-  {
-    image: '/products/porland-banner.png',
-    title: 'Collection Terre & Tradition',
-    brand: 'Porland'
-  },
-  {
-    image: '/products/bernardaud.png',
-    title: 'Pureté & Raffinement',
-    brand: 'Bernardaud'
-  }
-];
-
-export const PRODUCT_GALLERY: ProductSlide[] = [
-  {
-    image: '/products/koziol.png',
-    title: 'Verres Design',
-    brand: 'Koziol'
-  },
-  {
-    image: '/products/porland-1.png',
-    title: 'Assiettes Artisanales',
-    brand: 'Porland'
-  },
-  {
-    image: '/products/porland-2.png',
-    title: 'Collection Texturée',
-    brand: 'Porland'
-  },
-  {
-    image: '/products/ambiance-1.png',
-    title: 'L\'Art du Dressage',
-    brand: 'Ambiance'
-  }
+export const PRODUCTS: ProductItem[] = [
+  { image: '/products/dining-experience.png', titleKey: 'product.dining_experience' },
+  { image: '/products/fine-dining-signature.png', titleKey: 'product.fine_dining_signature' },
+  { image: '/products/asian-contemporary.png', titleKey: 'product.asian_contemporary' },
+  { image: '/products/beach-poolside.png', titleKey: 'product.beach_poolside' },
+  { image: '/products/buffet-service.png', titleKey: 'product.buffet_service' },
+  { image: '/products/glassware-beverage.png', titleKey: 'product.glassware_beverage' },
+  { image: '/products/cutlery-table-essentials.png', titleKey: 'product.cutlery_essentials' },
 ];
 
 export const PARTNERS: Partner[] = [
-  { name: 'Alessi', logoUrl: '/logos/alessi.png' },
   { name: 'Bernardaud', logoUrl: '/logos/bernardaud.png' },
-  { name: 'Gharyan', logoUrl: '/logos/gharyan.png' },
+  { name: 'Broggi', logoUrl: '/logos/broggi.png' },
+  { name: 'Alessi', logoUrl: '/logos/alessi.png' },
+  { name: 'Italesse', logoUrl: '/logos/italesse.png' },
+  { name: 'Gharyan Stoneware', logoUrl: '/logos/gharyan.png' },
+  { name: 'M.A.T', logoUrl: '/logos/mat.png' },
   { name: 'Koziol', logoUrl: '/logos/koziol.png' },
   { name: 'Nosse Ceramics', logoUrl: '/logos/nosse.png' },
-  { name: 'Porland', logoUrl: '/logos/porland.png' }
+  { name: 'Not Neutral', logoUrl: '/logos/notneutral.png' },
+  { name: 'Porland', logoUrl: '/logos/porland.png' },
 ];
-
-export const MAT_LOGO_COLOR = '#A8A24F';
