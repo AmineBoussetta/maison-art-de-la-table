@@ -154,11 +154,11 @@ const App: React.FC = () => {
           <div className="animate-marquee flex items-center">
             {[...PARTNERS, ...PARTNERS].map((partner, index) => (
               <div key={`partner-${index}`} className="flex-shrink-0 px-6 sm:px-8 md:px-16">
-                <div className="w-24 h-16 sm:w-32 sm:h-20 md:w-44 md:h-24 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
+                <div className="w-36 h-24 sm:w-48 sm:h-28 md:w-60 md:h-32 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
                   <img
                     src={partner.logoUrl}
                     alt={partner.name}
-                    className="max-w-full max-h-full object-contain"
+                    className="max-w-full max-h-full object-contain brightness-0 invert"
                   />
                 </div>
               </div>

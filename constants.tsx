@@ -24,14 +24,15 @@ export const PRODUCTS: ProductItem[] = [
 ];
 
 export const PARTNERS: Partner[] = [
-  { name: 'Bernardaud', logoUrl: '/logos/bernardaud.png' },
-  { name: 'Broggi', logoUrl: '/logos/broggi.png' },
-  { name: 'Alessi', logoUrl: '/logos/alessi.png' },
-  { name: 'Italesse', logoUrl: '/logos/italesse.png' },
-  { name: 'Gharyan Stoneware', logoUrl: '/logos/gharyan.png' },
-  { name: 'M.A.T', logoUrl: '/logos/mat.png' },
-  { name: 'Koziol', logoUrl: '/logos/koziol.png' },
-  { name: 'Nosse Ceramics', logoUrl: '/logos/nosse.png' },
-  { name: 'Not Neutral', logoUrl: '/logos/notneutral.png' },
-  { name: 'Porland', logoUrl: '/logos/porland.png' },
+  { name: 'Bernardaud', logoUrl: '/partner-logos/Logos-01.svg' },
+  { name: 'Broggi', logoUrl: '/partner-logos/Logos-02.svg' },
+  { name: 'M.A.T', logoUrl: '/partner-logos/Logos-03.svg' },
+  { name: 'Gharyan Stoneware', logoUrl: '/partner-logos/Logos-04.svg' },
+  { name: 'Koziol', logoUrl: '/partner-logos/Logos-05.svg' },
+  { name: 'Alessi', logoUrl: '/partner-logos/Logos-10.svg' },
+  { name: 'Nosse Ceramics', logoUrl: '/partner-logos/Logos-07.svg' },
+  { name: 'Not Neutral', logoUrl: '/partner-logos/Logos-08.svg' },
+  { name: 'Porland', logoUrl: '/partner-logos/Logos-09.svg' },
+  { name: 'Italesse', logoUrl: '/partner-logos/Logos-11.svg' },
+  { name: 'Partner', logoUrl: '/partner-logos/Logos-06.svg' },
 ];

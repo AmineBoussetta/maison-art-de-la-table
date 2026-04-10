@@ -12,7 +12,7 @@ export const translations: Translations = {
     'nav.contact': 'Contact',
 
     // Hero
-    'hero.locations': 'Mauritius • Seychelles • Maldives • Indian Ocean',
+    'hero.locations': 'Mauritius • Seychelles • Maldives',
     'hero.based': 'Based in Mauritius',
     'hero.cta': 'Explore Our Vision',
 
@@ -89,7 +89,7 @@ export const translations: Translations = {
     'nav.contact': 'Contact',
 
     // Hero
-    'hero.locations': 'Île Maurice • Seychelles • Maldives • Océan Indien',
+    'hero.locations': 'Île Maurice • Seychelles • Maldives',
     'hero.based': 'Basé à Île Maurice',
     'hero.cta': 'Explorer Notre Vision',
 
