@@ -9,7 +9,7 @@ export const translations: Translations = {
     'nav.about': 'About',
     'nav.services': 'Services',
     'nav.collections': 'Collections',
-    'nav.contact': 'Get a Quote',
+    'nav.contact': 'Contact',
 
     // Hero
     'hero.locations': 'Mauritius • Seychelles • Maldives',
@@ -89,7 +89,7 @@ export const translations: Translations = {
     'nav.about': 'À Propos',
     'nav.services': 'Services',
     'nav.collections': 'Collections',
-    'nav.contact': 'Demander un Devis',
+    'nav.contact': 'Contact',
 
     // Hero
     'hero.locations': 'Île Maurice • Seychelles • Maldives',

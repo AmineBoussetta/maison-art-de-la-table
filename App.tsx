@@ -77,7 +77,7 @@ const App: React.FC = () => {
               <a 
                 key={item.key}
                 href={item.href}
-                className={`text-xs uppercase hover:text-mat-olive transition-colors ${item.key === 'nav.contact' ? 'tracking-[0.15em]' : 'tracking-[0.3em]'} ${isScrolled ? 'text-gray-600' : 'text-white/80'}`}
+                className={`text-xs uppercase tracking-[0.3em] hover:text-mat-olive transition-colors ${isScrolled ? 'text-gray-600' : 'text-white/80'}`}
               >
                 {t(item.key)}
               </a>
