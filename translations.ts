@@ -20,7 +20,7 @@ export const translations: Translations = {
     'collections.title': 'Our Collections',
 
     // About
-    'about.subtitle': 'Who We Are',
+    'about.subtitle': '',
     'about.title': 'Elevating the Art of the Table',
     'about.full.p1': 'Maison Art de la Table is a hospitality supply company based in Mauritius, dedicated to elevating the dining experience of hotels, restaurants, and homes through carefully curated tableware, service essentials, and décor pieces.',
     'about.full.p2': 'Bringing years of experience from the North American hospitality and distribution markets, Maison Art de la Table was founded by Ghassen Ghariani, who introduces a fresh perspective to the industry by combining international expertise, refined aesthetics, and a new way of working with hospitality partners. Our showroom in Mauritius allows professionals and clients to discover and experience our collections firsthand.',
@@ -29,7 +29,7 @@ export const translations: Translations = {
     'about.full.p5': 'At Maison Art de la Table, we believe that the table and the objects that surround it are more than functional — they are part of the atmosphere, the experience, and the story each place tells.',
 
     // Mission
-    'mission.subtitle': 'Our Philosophy',
+    'mission.subtitle': '',
     'mission.title': 'Our Mission',
     'mission.quote': '"Hospitality is about creating emotions. It lives in the details — the texture of a plate, the weight of a cup, the beauty of what surrounds a meal."',
 
@@ -61,8 +61,11 @@ export const translations: Translations = {
     'contact.whatsapp.label': 'WhatsApp',
     'contact.whatsapp.value': '+230 5858 0930',
     'contact.form.title': 'Send a Message',
+    'contact.form.quote': 'Get a Quote',
     'contact.form.name': 'Name',
     'contact.form.email': 'Email',
+    'contact.form.phone': 'Phone Number',
+    'contact.form.business': 'Business Name',
     'contact.form.message': 'Message',
     'contact.form.submit': 'Send Message',
 
@@ -97,7 +100,7 @@ export const translations: Translations = {
     'collections.title': 'Nos Collections',
 
     // About
-    'about.subtitle': 'Qui Sommes-Nous',
+    'about.subtitle': '',
     'about.title': "Élever l'Art de la Table",
     'about.full.p1': "Maison Art de la Table est une société d'équipement pour l'hôtellerie basée à Maurice, dédiée à sublimer l'expérience de table des hôtels, restaurants et particuliers à travers une sélection soignée de vaisselle, d'accessoires de service et d'objets de décoration.",
     'about.full.p2': "Forte de plusieurs années d'expérience sur les marchés nord-américains de l'hôtellerie et de la distribution, Maison Art de la Table a été fondée par Ghassen Ghariani, qui apporte une nouvelle vision au secteur en combinant expertise internationale, sens du détail et approche renouvelée de la collaboration avec les acteurs de l'hospitalité. Notre showroom à Maurice permet aux professionnels comme aux particuliers de découvrir et d'expérimenter nos collections.",
@@ -106,7 +109,7 @@ export const translations: Translations = {
     'about.full.p5': "Chez Maison Art de la Table, nous considérons que la table et les objets qui l'entourent ne sont pas simplement fonctionnels — ils participent à l'atmosphère, à l'expérience et à l'histoire que chaque lieu raconte.",
 
     // Mission
-    'mission.subtitle': 'Notre Philosophie',
+    'mission.subtitle': '',
     'mission.title': 'Notre Mission',
     'mission.quote': "\"L'hospitalité consiste à créer des émotions. Elle vit dans les détails — la texture d'une assiette, le poids d'une tasse, la beauté de ce qui entoure un repas.\"",
 
@@ -138,8 +141,11 @@ export const translations: Translations = {
     'contact.whatsapp.label': 'WhatsApp',
     'contact.whatsapp.value': '+230 5858 0930',
     'contact.form.title': 'Envoyer un Message',
+    'contact.form.quote': 'Demander un Devis',
     'contact.form.name': 'Nom',
     'contact.form.email': 'E-mail',
+    'contact.form.phone': 'Téléphone',
+    'contact.form.business': "Nom de l'Entreprise",
     'contact.form.message': 'Message',
     'contact.form.submit': 'Envoyer le Message',
 

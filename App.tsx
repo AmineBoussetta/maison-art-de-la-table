@@ -266,7 +266,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section id="services" className="py-12 sm:py-16 lg:py-24 bg-[#F5F5F0] scroll-mt-20">
+      <section id="services" className="pt-2 pb-12 sm:pt-4 sm:pb-16 lg:pt-4 lg:pb-24 bg-[#F5F5F0] scroll-mt-20">
         <div className="px-4 sm:px-6 md:px-12">
           <SectionHeading subtitle={t('strengths.subtitle')} title={t('strengths.title')} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 mt-8 sm:mt-12 lg:mt-14">
@@ -336,21 +336,32 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 sm:p-10 md:p-16 relative">
+              <span className="inline-block px-4 py-1 rounded-full border border-white/30 text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-white/70 mb-4">{t('contact.form.quote')}</span>
               <h3 className="text-lg sm:text-xl font-serif mb-4 sm:mb-6 text-white">{t('contact.form.title')}</h3>
               <form className="space-y-4 sm:space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.name')}</label>
-                    <input type="text" className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.name')} *</label>
+                    <input type="text" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.email')}</label>
-                    <input type="email" className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.email')} *</label>
+                    <input type="email" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.phone')} *</label>
+                    <input type="tel" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.business')} *</label>
+                    <input type="text" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.message')}</label>
-                  <textarea rows={4} className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
+                  <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.message')} *</label>
+                  <textarea rows={4} required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
                 </div>
                 <button className="flex items-center gap-2 sm:gap-3 bg-white text-mat-olive px-5 sm:px-8 py-2.5 sm:py-3 uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-gray-900 hover:text-white transition-all duration-300">
                   {t('contact.form.submit')} <ArrowRight size={16} />

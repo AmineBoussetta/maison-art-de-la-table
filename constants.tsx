@@ -33,6 +33,5 @@ export const PARTNERS: Partner[] = [
   { name: 'Nosse Ceramics', logoUrl: '/partner-logos/Logos-07.svg' },
   { name: 'Not Neutral', logoUrl: '/partner-logos/Logos-08.svg' },
   { name: 'Porland', logoUrl: '/partner-logos/Logos-09.svg' },
-  { name: 'Italesse', logoUrl: '/partner-logos/Logos-11.svg' },
   { name: 'Partner', logoUrl: '/partner-logos/Logos-06.svg' },
 ];
