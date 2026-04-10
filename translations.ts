@@ -9,7 +9,7 @@ export const translations: Translations = {
     'nav.about': 'About',
     'nav.services': 'Services',
     'nav.collections': 'Collections',
-    'nav.contact': 'Contact',
+    'nav.contact': 'Get a Quote',
 
     // Hero
     'hero.locations': 'Mauritius • Seychelles • Maldives',
@@ -50,8 +50,8 @@ export const translations: Translations = {
     'strengths.6.desc': 'Clear, honest pricing with no hidden margins, ensuring long-term value for our partners.',
 
     // Contact
-    'contact.subtitle': 'Contact',
-    'contact.title': "Let's Start a Conversation",
+    'contact.subtitle': '',
+    'contact.title': 'Contact Info',
     'contact.address.label': 'Showroom Address',
     'contact.address.appointment': 'By appointment only',
     'contact.address.value': 'Maison Art de la Table',
@@ -89,7 +89,7 @@ export const translations: Translations = {
     'nav.about': 'À Propos',
     'nav.services': 'Services',
     'nav.collections': 'Collections',
-    'nav.contact': 'Contact',
+    'nav.contact': 'Demander un Devis',
 
     // Hero
     'hero.locations': 'Île Maurice • Seychelles • Maldives',
@@ -130,8 +130,8 @@ export const translations: Translations = {
     'strengths.6.desc': 'Une politique de prix claire et maîtrisée, sans marges cachées, pour garantir une relation de confiance durable avec nos partenaires.',
 
     // Contact
-    'contact.subtitle': 'Contact',
-    'contact.title': 'Commençons une Conversation',
+    'contact.subtitle': '',
+    'contact.title': 'Nos Coordonnées',
     'contact.address.label': 'Adresse du Showroom',
     'contact.address.appointment': 'Sur rendez-vous uniquement',
     'contact.address.value': 'Maison Art de la Table',

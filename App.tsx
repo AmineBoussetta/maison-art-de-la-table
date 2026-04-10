@@ -197,7 +197,7 @@ const App: React.FC = () => {
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
-                  <div className="mt-2 sm:mt-3">
+                  <div className="mt-2 sm:mt-3 text-center">
                     <h4 className="text-gray-900 font-serif text-xs sm:text-sm">{t(item.titleKey)}</h4>
                   </div>
                 </div>
@@ -296,8 +296,8 @@ const App: React.FC = () => {
         <div className="px-4 sm:px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-20">
             <div>
-              <SectionHeading subtitle={t('contact.subtitle')} title={t('contact.title')} light />
-              <div className="space-y-8 sm:space-y-12 mt-10 sm:mt-16">
+              <h3 className="text-lg sm:text-xl font-serif text-white mb-8 sm:mb-12">{t('contact.title')}</h3>
+              <div className="space-y-8 sm:space-y-12">
                 <div className="flex items-start gap-4 sm:gap-8">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border border-white/30 flex items-center justify-center text-white flex-shrink-0">
                     <MapPin size={20} className="sm:hidden" />
@@ -336,7 +336,6 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 sm:p-10 md:p-16 relative">
-              <span className="inline-block px-4 py-1 rounded-full border border-white/30 text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-white/70 mb-4">{t('contact.form.quote')}</span>
               <h3 className="text-lg sm:text-xl font-serif mb-4 sm:mb-6 text-white">{t('contact.form.title')}</h3>
               <form className="space-y-4 sm:space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
