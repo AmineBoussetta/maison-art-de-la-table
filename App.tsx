@@ -9,6 +9,7 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lang, setLang] = useState<Lang>('en');
+  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const t = useCallback((key: string) => translations[lang][key] ?? key, [lang]);
@@ -337,35 +338,76 @@ const App: React.FC = () => {
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 sm:p-10 md:p-16 relative">
               <h3 className="text-lg sm:text-xl font-serif mb-4 sm:mb-6 text-white">{t('contact.form.title')}</h3>
-              <form className="space-y-4 sm:space-y-6">
+              {formStatus === 'success' ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-16 h-16 rounded-full border-2 border-white/40 flex items-center justify-center mb-6">
+                    <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <p className="text-white font-serif text-lg mb-2">{t('contact.form.success.title')}</p>
+                  <p className="text-white/60 text-sm">{t('contact.form.success.desc')}</p>
+                </div>
+              ) : (
+              <form
+                className="space-y-4 sm:space-y-6"
+                action="https://formspree.io/f/xwvwgedn"
+                method="POST"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setFormStatus('submitting');
+                  const form = e.currentTarget;
+                  try {
+                    const res = await fetch(form.action, {
+                      method: 'POST',
+                      body: new FormData(form),
+                      headers: { Accept: 'application/json' },
+                    });
+                    if (res.ok) {
+                      setFormStatus('success');
+                      form.reset();
+                    } else {
+                      setFormStatus('error');
+                    }
+                  } catch {
+                    setFormStatus('error');
+                  }
+                }}
+              >
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.name')} *</label>
-                    <input type="text" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <input type="text" name="name" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.email')} *</label>
-                    <input type="email" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <input type="email" name="email" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.phone')} *</label>
-                    <input type="tel" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <input type="tel" name="phone" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.business')} *</label>
-                    <input type="text" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
+                    <input type="text" name="business" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">{t('contact.form.message')} *</label>
-                  <textarea rows={4} required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
+                  <textarea rows={4} name="message" required className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"></textarea>
                 </div>
-                <button className="flex items-center gap-2 sm:gap-3 bg-white text-mat-olive px-5 sm:px-8 py-2.5 sm:py-3 uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-gray-900 hover:text-white transition-all duration-300">
-                  {t('contact.form.submit')} <ArrowRight size={16} />
+                {formStatus === 'error' && (
+                  <p className="text-red-300 text-xs">{t('contact.form.error')}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={formStatus === 'submitting'}
+                  className="flex items-center gap-2 sm:gap-3 bg-white text-mat-olive px-5 sm:px-8 py-2.5 sm:py-3 uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:bg-gray-900 hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formStatus === 'submitting' ? t('contact.form.sending') : t('contact.form.submit')} <ArrowRight size={16} />
                 </button>
               </form>
+              )}
             </div>
           </div>
         </div>
@@ -386,7 +428,7 @@ const App: React.FC = () => {
             <p className="text-sm font-serif text-gray-900 italic">{t('footer.tagline.bottom')}</p>
           </div>
         </div>
-        <p className="mt-4 text-[9px] text-gray-300 tracking-widest uppercase text-center">Developed by AB</p>
+        <p className="mt-4 text-[9px] text-gray-300 tracking-widest uppercase text-center"><a href="mailto:amineboussetta006@gmail.com" className="hover:text-gray-400 transition-colors">Developed by AB</a></p>
       </footer>
     </div>
   );

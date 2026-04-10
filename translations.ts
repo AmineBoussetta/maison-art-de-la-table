@@ -68,6 +68,10 @@ export const translations: Translations = {
     'contact.form.business': 'Business Name',
     'contact.form.message': 'Message',
     'contact.form.submit': 'Send Message',
+    'contact.form.sending': 'Sending...',
+    'contact.form.error': 'Something went wrong. Please try again.',
+    'contact.form.success.title': 'Message Sent!',
+    'contact.form.success.desc': 'Thank you for reaching out. We will get back to you shortly.',
 
     // Footer
     'footer.rights': '© 2026 Maison Art de la Table. All rights reserved.',
@@ -148,6 +152,10 @@ export const translations: Translations = {
     'contact.form.business': "Nom de l'Entreprise",
     'contact.form.message': 'Message',
     'contact.form.submit': 'Envoyer le Message',
+    'contact.form.sending': 'Envoi en cours...',
+    'contact.form.error': 'Une erreur est survenue. Veuillez réessayer.',
+    'contact.form.success.title': 'Message Envoyé !',
+    'contact.form.success.desc': 'Merci de nous avoir contactés. Nous vous répondrons dans les plus brefs délais.',
 
     // Footer
     'footer.rights': '© 2026 Maison Art de la Table. Tous droits réservés.',
