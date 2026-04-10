@@ -154,7 +154,7 @@ const App: React.FC = () => {
           <div className="animate-marquee flex items-center">
             {[...PARTNERS, ...PARTNERS].map((partner, index) => (
               <div key={`partner-${index}`} className="flex-shrink-0 px-6 sm:px-8 md:px-16">
-                <div className="w-36 h-24 sm:w-48 sm:h-28 md:w-60 md:h-32 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
+                <div className="w-28 h-20 sm:w-40 sm:h-24 md:w-52 md:h-28 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500 cursor-default">
                   <img
                     src={partner.logoUrl}
                     alt={partner.name}
@@ -376,6 +376,7 @@ const App: React.FC = () => {
             <p className="text-sm font-serif text-gray-900 italic">{t('footer.tagline.bottom')}</p>
           </div>
         </div>
+        <p className="mt-4 text-[9px] text-gray-300 tracking-widest uppercase text-center">Developed by AB</p>
       </footer>
     </div>
   );
