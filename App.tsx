@@ -420,7 +420,7 @@ const App: React.FC = () => {
             <p className="text-xs uppercase tracking-widest text-gray-400 text-center md:text-left">{t('footer.rights')}</p>
           </div>
           <div className="flex gap-6 sm:gap-8">
-            <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="Instagram"><Instagram size={20} /></a>
+            <a href="https://www.instagram.com/maisonartdelatable/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="Instagram"><Instagram size={20} /></a>
             <a href="#" className="text-gray-400 hover:text-mat-olive transition-colors" aria-label="LinkedIn"><Linkedin size={20} /></a>
           </div>
           <div className="text-center md:text-right flex flex-col items-center md:items-end">
